@@ -1,0 +1,226 @@
+seed: 42                                              # global RNG; used by the trainer's set_seed and by the data sampler
+
+pipeline:
+  experiment_name: muradif                            # name for this run, used to namespace data/, tokenizer/, logs/, NeoAraBERT-
+
+  datasets:
+    main_tokenizer:                                   # corpus the base WordPiece tokenizer trains on
+      path: U4RASD/Muradif                            # HuggingFace dataset id, or a local save_to_disk folder
+      split: test                                     # any HF split name; null pulls every split and concatenates
+      config_name: null                               # HF config name when a dataset has multiple configs
+      revision: null                                  # pin to a commit hash, branch, or tag if you need a stable snapshot
+      data_files: null                                # local file glob for csv / json / text / parquet sources
+      text_column: context                            # column that holds the raw text
+      sample:
+        size: null                                    # null uses every row; set an integer to keep at most that many
+        strategy: head                                # head, tail, or random (random is seeded by the global seed)
+      preprocessed_dir: data/${pipeline.experiment_name}/main_tokenizer_stemmed
+
+    diacritics_tokenizer:                             # corpus the diacritics WordPiece tokenizer trains on
+      path: U4RASD/Muradif
+      split: test
+      config_name: null
+      revision: null
+      data_files: null
+      text_column: context
+      sample:
+        size: null
+        strategy: head                                # head, tail, or random
+      preprocessed_dir: data/${pipeline.experiment_name}/diacritics_tokenizer_templated
+
+    pretraining:                                      # corpus the model trains on
+      path: U4RASD/Muradif
+      split: test
+      config_name: null
+      revision: null
+      data_files: null
+      text_column: context
+      sample:
+        size: null
+        strategy: head                                # head, tail, or random
+      preprocessed_dir: data/${pipeline.experiment_name}/pretraining_stemmed
+
+  stemming:
+    separator: "[+]"                                  # written between stem pieces and baked into the vocab as a special token
+    preserve_diacritics: true                         # if true, diacritics survive stemming and are pushed into a side-string
+
+  tokenizer_main:                                     # base WordPiece trained on the stemmed main_tokenizer corpus
+    output_dir: tokenizer/${pipeline.experiment_name}/main
+    vocab_size: 6000
+    num_unused_tokens: 0
+    min_frequency: 2
+
+  tokenizer_diacritics:                               # diacritics-only WordPiece trained on the templated diacritics corpus
+    output_dir: tokenizer/${pipeline.experiment_name}/diacritics
+    vocab_size: 2000
+    num_unused_tokens: 0
+    min_frequency: 2
+
+  tokenizer_merged:                                   # base vocab plus a slice of diacritic-only tokens appended on top
+    output_dir: tokenizer/${pipeline.experiment_name}/merged
+    max_diacritics_only_tokens: 500                   # upper bound on diacritic-only tokens appended; real corpora often yield fewer
+
+  export:                                             # self-contained HF folder for AutoModel.from_pretrained
+    output_dir: NeoAraBERT-${pipeline.experiment_name}
+
+wandb:
+  api_key: null                                       # paste your key to auto-login; null leaves it to WANDB_API_KEY or wandb login. Avoid committing real keys.
+  resume: never                                       # allow, never, must, auto, true, or false
+  name: null                                          # run name shown in the wandb UI; null lets wandb pick one
+  project: neoarabert
+  entity: null                                        # team or user; null means your default account
+  tags: []
+  dir: logs/${pipeline.experiment_name}/wandb
+  mode: disabled                                        # online, offline, disabled, or shared
+  log_interval: 10                                    # log every N optimizer steps
+
+dataset:                                              # consumed by the preprocessing and pretraining stages; points at the pretraining corpus
+  name: ${pipeline.experiment_name}
+  column: ${pipeline.datasets.pretraining.text_column}
+  path_to_disk: data/${pipeline.experiment_name}/tokenized
+  train:
+    path: ${pipeline.datasets.pretraining.preprocessed_dir}
+    cache_dir: data/${pipeline.experiment_name}/hf_cache
+  keep_columns: []                                    # extra columns to keep through tokenization (e.g. disambig when targeted_masking is on)
+
+tokenizer:
+  pretrained_model_name_or_path: ${pipeline.tokenizer_merged.output_dir}
+  max_length: 1024                                    # truncation length applied during preprocessing
+
+model:
+  hidden_size: 768
+  num_hidden_layers: 28
+  num_attention_heads: 12
+  intermediate_size: 3072
+  rope: true                                          # rotary positional embeddings
+  rms_norm: true                                      # true uses RMSNorm, false uses LayerNorm
+  hidden_act: swiglu                                  # swiglu or gelu
+  dropout_prob: 0.0
+  dropout: 0.0
+  norm_eps: 1.0e-5
+  embedding_init_range: 0.02
+  decoder_init_range: 0.02
+  classifier_init_range: 0.02
+
+optimizer:
+  name: AdamW                                         # AdamW or Adam
+  hparams:
+    lr: 6.0e-5                                        # peak learning rate
+    betas: [0.9, 0.95]
+    eps: 1.0e-8
+    weight_decay: 0.1
+
+scheduler:
+  warmup_steps: 5                                     # cumulative step at which linear warmup ends
+  warmup_start_factor: 1.0e-4                         # warmup starts at peak times this and reaches peak at warmup_steps
+  decay_steps: 90                                     # cumulative step at which decay finishes; after this the lr is held flat
+  decay: cosine                                       # linear or cosine
+  final_ratio: 0.1                                    # lr at the end of decay (and during the constant tail) as a fraction of peak
+
+trainer:
+  tf32: true                                          # enable TF32 matmul on Ampere and newer GPUs
+  mixed_precision: bf16                               # no, fp8, fp16, or bf16
+  resume: false                                       # if true, picks up from the latest checkpoint under trainer.dir
+  disable_tqdm: false
+  max_steps: 100                                      # total optimizer steps for this run
+  gradient_accumulation_steps: 1
+  gradient_clipping: 1.0
+  init_from_pretrained: null                          # path to a checkpoint to warm-start from, or null
+  dir: logs/${pipeline.experiment_name}/checkpoints
+  accelerate:
+    save_steps: 100                                   # how often Accelerate saves the full training state
+    max_ckpt: 1                                       # rolling-window count for Accelerate state checkpoints
+  model:
+    save_steps: 100                                   # how often we dump a plain model state_dict
+    max_ckpt: 1
+
+accelerate:                                           # written to a temp yaml and passed to `accelerate launch --config_file` by the orchestrator at the pretrain stage
+  compute_environment: LOCAL_MACHINE                  # LOCAL_MACHINE or AMAZON_SAGEMAKER
+  distributed_type: MULTI_GPU                         # NO, MULTI_CPU, MULTI_GPU, MULTI_NPU, FSDP, DEEPSPEED, MEGATRON_LM
+  dynamo_backend: 'no'                                # 'no' to disable; otherwise inductor, eager, aot_eager, ...
+  downcast_bf16: 'no'                                 # 'no' or 'yes'
+  gpu_ids: all                                        # 'all' or a comma-separated list like '0,1'
+  machine_rank: 0                                     # this machine's rank in a multi-machine setup
+  main_training_function: main
+  mixed_precision: ${trainer.mixed_precision}         # kept in sync with trainer.mixed_precision via interpolation
+  num_machines: 1
+  num_processes: 1                                    # the number of GPUs to use for training (when distributed_type: MULTI_GPU)
+  rdzv_backend: static                                # static or c10d
+  same_network: true
+  tpu_env: []
+  tpu_use_cluster: false
+  tpu_use_sudo: false
+  use_cpu: false
+
+dataloader:
+  train:
+    num_workers: 4                                    # 0 keeps loading on the main process; >0 uses subprocess workers
+    batch_size: 2
+    shuffle: true                                     # reshuffle every epoch (deterministic given the global seed)
+    pin_memory: false
+    persistent_workers: false
+    pack_sequences: false                             # concatenate short examples into max_length blocks to cut padding waste
+
+datacollator:
+  mlm_probability: 0.20                               # primary mask rate under the active group_mask path; also the fallback when targeted_masking=true and a tag is missing from pos_masking
+  pad_to_multiple_of: 8
+  mask_all: true                                      # true uses our CustomCollatorForMLM, false uses the stock HF DataCollatorForLanguageModeling
+  targeted_masking: false                             # turn on to drive masking from POS tags (needs a disambig column)
+  group_mask: true                                    # mask whole stem-piece groups together; this is the active path
+  stemming_token: ${pipeline.stemming.separator}
+  log_dir: logs/${pipeline.experiment_name}/collator
+  mask_linear_decay: false                            # only acts under targeted_masking=true; interpolates per-tag rate initial -> final over mask_decay_steps
+  mask_decay_steps: ${trainer.max_steps}              # length of that interpolation in steps; inert when targeted_masking=false. Not the same as scheduler.decay_steps (LR milestone)
+
+  pos_masking:                                        # entire block only used when targeted_masking=true; mlm_probability is the rate under the active group_mask path
+    initial:                                          # per-tag rate at step 0 when targeted_masking=true and mask_linear_decay=true
+      NOUN: 0.525
+      PROPN: 0.525
+      ADJ: 0.450
+      VERB: 0.450
+      ADV: 0.300
+      NUM: 0.300
+      INTJ: 0.225
+      PRON: 0.150
+      ADP: 0.150
+      PUNCT: 0.150
+      SCONJ: 0.150
+      CCONJ: 0.150
+      PART: 0.150
+      DET: 0.075
+      AUX: 0.075
+      X: 0.075
+    final:                                            # per-tag rate reached at mask_decay_steps and held flat after; only used when targeted_masking=true and mask_linear_decay=true
+      NOUN: 0.2625
+      PROPN: 0.2625
+      ADJ: 0.225
+      VERB: 0.225
+      ADV: 0.15
+      NUM: 0.15
+      INTJ: 0.1125
+      PRON: 0.075
+      ADP: 0.075
+      PUNCT: 0.075
+      SCONJ: 0.075
+      CCONJ: 0.075
+      PART: 0.075
+      DET: 0.0375
+      AUX: 0.0375
+      X: 0.0375
+    base:                                             # per-tag rate when targeted_masking=true and mask_linear_decay=false, or fallback for tags missing from `initial`
+      NOUN: 0.35
+      PROPN: 0.35
+      ADJ: 0.30
+      VERB: 0.30
+      ADV: 0.20
+      NUM: 0.20
+      INTJ: 0.15
+      PRON: 0.10
+      ADP: 0.10
+      PUNCT: 0.10
+      SCONJ: 0.10
+      CCONJ: 0.10
+      PART: 0.10
+      DET: 0.05
+      AUX: 0.05
+      X: 0.05

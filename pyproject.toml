@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "neoarabert"
+version = "0.0.0"
+description = "NeoAraBERT"
+requires-python = ">= 3.10"
+dependencies = [
+    "fast-disambig",
+    "datasets==4.8.4",
+    "accelerate==1.2.1",
+    "deepspeed==0.15.4",
+    "torch==2.4.0",
+    "transformers==4.49.0",
+    "xformers==0.0.27.post2",
+    "wandb==0.26.0",
+    "omegaconf==2.3.0",
+    "numpy==2.4.4",
+    "libaio==0.9.5",
+    "tqdm==4.67.3",
+    "einops==0.8.2",
+]
+authors = [
+    { name = "Osama Rakan Al Mraikhat", email = "oalmraikhat@dohainstitute.edu.qa" },
+    { name = "Hadi Hamoud", email = "hhamoud@dohainstitute.edu.qa" },
+    { name = "Chadi Abou Chakra", email = "cabouchakr@dohainstitute.edu.qa" },
+    { name = "Qusai Abu Obaida", email = "qabuobaida@dohainstitute.edu.qa" },
+    { name = "Mohamad Ballout", email = "mballout@dohainstitute.edu.qa" },
+    { name = "Fadi A. Zaraket", email = "fzaraket@dohainstitute.edu.qa" }
+]
+maintainers = [
+    { name = "Osama Rakan Al Mraikhat", email = "oalmraikhat@dohainstitute.edu.qa" },
+    { name = "Hadi Hamoud", email = "hhamoud@dohainstitute.edu.qa" },
+    { name = "Chadi Abou Chakra", email = "cabouchakr@dohainstitute.edu.qa" },
+    { name = "Qusai Abu Obaida", email = "qabuobaida@dohainstitute.edu.qa" },
+    { name = "Mohamad Ballout", email = "mballout@dohainstitute.edu.qa" },
+    { name = "Fadi A. Zaraket", email = "fzaraket@dohainstitute.edu.qa" }
+]
+readme = "README.md"

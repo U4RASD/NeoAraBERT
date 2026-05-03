@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+build/
+dist/
+
+# Virtualenvs
+venv/
+.venv/
+env/
+
+# Pipeline artifacts (per-dataset under each root)
+data/
+tokenizer/
+logs/
+wandb/
+NeoAraBERT-*
+
+# Pytest
+.pytest_cache/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store

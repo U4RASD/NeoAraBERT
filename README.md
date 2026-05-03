@@ -45,7 +45,7 @@ uv sync
 python scripts/run_pipeline.py --config conf/neoarabert.yaml
 ```
 
-See `conf/neoarabert.yaml` for the full example config. Fields have inline comments explaining what they are used for. The POS-targeted masking will be added later.
+See [`conf/neoarabert.yaml`](https://github.com/U4RASD/NeoAraBERT/blob/main/conf/neoarabert.yaml) for the full example config. Fields have inline comments explaining what they are used for. The POS-targeted masking will be added later.
 
 ## Loading the trained model
 

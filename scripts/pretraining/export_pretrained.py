@@ -77,7 +77,7 @@ def _validate_yaml(cfg) -> None:
 def _config_kwargs_from_yaml(cfg) -> dict:
     """Pass through every cfg.model field plus vocab_size/max_length from
     cfg.tokenizer. Unknown fields land in kwargs and get serialized verbatim
-    into config.json — so the yaml is the single source of truth."""
+    into config.json, so the yaml is the single source of truth."""
     kwargs = dict(OmegaConf.to_container(cfg.model, resolve=True))
     kwargs["vocab_size"] = int(cfg.tokenizer.vocab_size)
     kwargs["max_length"] = int(cfg.tokenizer.max_length)
@@ -94,7 +94,7 @@ def _format_default(v) -> str:
 
 def _patch_model_py_defaults(model_py: Path, values: dict) -> None:
     """Rewrite NeoAraBERTConfig.__init__ defaults so the on-disk model.py
-    advertises the values this checkpoint was trained with — not the
+    advertises the values this checkpoint was trained with, not the
     template's last-resort fallbacks. Per-parameter regex match on
     `name: type = default,`; the `: type =` shape only occurs in function
     signatures, so we don't need to scope to a particular block."""

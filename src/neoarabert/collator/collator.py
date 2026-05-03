@@ -642,7 +642,7 @@ class CustomCollatorForMLM(DataCollatorForLanguageModeling):
         """Return the current static linear-decay schedule values for wandb.
 
         Emits `mask_decay/progress` and one `mask_decay/eff/<TAG>` per
-        configured POS tag. Cheap — pure function of the current step
+        configured POS tag. Cheap, pure function of the current step
         counter and the configured `pos_masking` tables. No file I/O,
         no per-rank aggregation, no corpus statistics.
         """

@@ -11,12 +11,12 @@ venv/
 .venv/
 env/
 
-# Pipeline artifacts (per-dataset under each root)
-data/
-tokenizer/
-logs/
-wandb/
-NeoAraBERT-*
+# Pipeline artifacts. Leading / anchors to repo root so we don't shadow src/neoarabert/tokenizer/
+/data/
+/tokenizer/
+/logs/
+/wandb/
+/NeoAraBERT-*
 
 # Pytest
 .pytest_cache/

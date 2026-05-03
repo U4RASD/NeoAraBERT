@@ -26,16 +26,18 @@ The available NeoAraBERT checkpoints:
 
 For detailed benchmarking, see https://acr.ps/neoarabert.
 
-## Training prerequisites
+## Installation
+
+Prerequisite: install [`uv`](https://docs.astral.sh/uv/getting-started/installation/) first.
 
 ```bash
 git clone https://github.com/U4RASD/NeoAraBERT.git
 cd NeoAraBERT
-python -m venv venv
-source venv/bin/activate
-pip install pip==26.1
-pip install -e .
+uv venv --python 3.11
+source .venv/bin/activate
+uv sync
 ```
+
 
 ## Training run
 
@@ -59,6 +61,19 @@ model = AutoModel.from_pretrained(path, trust_remote_code=True)
 inputs = tokenizer("المركز العربيّ للأبحاث ودراسة السياسات.", return_tensors="pt")
 embedding = model(**inputs).last_hidden_state[:, 0, :]
 ```
+
+<details>
+<summary>Standard pip installation (Python 3.11 or above)</summary>
+
+```bash
+git clone https://github.com/U4RASD/NeoAraBERT.git
+cd NeoAraBERT
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+</details>
 
 ## Citation
 

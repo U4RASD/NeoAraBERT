@@ -6,13 +6,14 @@ build-backend = "setuptools.build_meta"
 name = "neoarabert"
 version = "0.0.0"
 description = "NeoAraBERT"
-requires-python = ">= 3.10"
+requires-python = ">=3.11,<3.14"
 dependencies = [
+    "setuptools >= 61.0",
     "fast-disambig",
     "datasets==4.8.4",
     "accelerate==1.2.1",
     "deepspeed==0.15.4",
-    "torch==2.4.0",
+    "torch>=2.6,<3",
     "transformers==4.49.0",
     "xformers==0.0.27.post2",
     "wandb==0.26.0",
@@ -21,6 +22,12 @@ dependencies = [
     "libaio==0.9.5",
     "tqdm==4.67.3",
     "einops==0.8.2",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 authors = [
     { name = "Osama Rakan Al Mraikhat", email = "oalmraikhat@dohainstitute.edu.qa" },

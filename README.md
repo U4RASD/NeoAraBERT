@@ -37,7 +37,18 @@ uv venv --python 3.11
 source .venv/bin/activate
 uv sync
 ```
+<details>
+<summary>Standard pip installation (Python 3.11 or above)</summary>
 
+```bash
+git clone https://github.com/U4RASD/NeoAraBERT.git
+cd NeoAraBERT
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+</details>
 
 ## Training run
 
@@ -61,19 +72,6 @@ model = AutoModel.from_pretrained(path, trust_remote_code=True)
 inputs = tokenizer("المركز العربيّ للأبحاث ودراسة السياسات.", return_tensors="pt")
 embedding = model(**inputs).last_hidden_state[:, 0, :]
 ```
-
-<details>
-<summary>Standard pip installation (Python 3.11 or above)</summary>
-
-```bash
-git clone https://github.com/U4RASD/NeoAraBERT.git
-cd NeoAraBERT
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-```
-
-</details>
 
 ## Citation
 

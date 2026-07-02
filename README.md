@@ -79,19 +79,27 @@ If you use the code, model, or the Muradif benchmark, please cite:
 
 ```bibtex
 @inproceedings{abou-chakra-etal-2026-neoarabert,
-  title = "{NeoAraBERT}: A Modern Foundation Model for Arabic Embeddings with Diacritics-Aware Tokenization and POS-Targeted Masking",
-  author = "Abou Chakra, Chadi and
-            Hamoud, Hadi and
-            Rakan Al Mraikhat, Osama and
-            Abu Obaida, Qusai and
-            Ballout, Mohamad and
-            Zaraket, Fadi A.",
-  booktitle = "Findings of the Association for Computational Linguistics: ACL 2026",
-  address = "San Diego, California, United States",
-  year = "2026",
-  note = "Accepted paper",
-  url = "https://acr.ps/neoarabert",
-  abstract = {We present NeoAraBERT, a state-of-the-art open-source Arabic text-embedding model built on the NeoBERT architecture. We pre-train NeoAraBERT on diverse open-source and internal datasets covering modern standard, classical, and dialectal Arabic. We guided our design choices with Arabic tailored ablation studies including text normalization, light stemming, and diacritics-aware tokenization handling. We also performed more general POS-aware token masking and learning-rate scheduling ablation studies. We benchmarked NeoAraBERT against five top-performing Arabic models on 23 tasks, including a novel synonym-based task, ``Muradif'', that directly assesses embedding quality with no additional fine-tuning. NeoAraBERT variants (MSA, dialectal, and mixed) rank first in 18 tasks, second in two, third in two, and fourth in one task. They show strong performance on classical and modern standard Arabic, substantial margins of improvement ($>$7\%) in two tasks, and a $+$2.75\% improvement on average across all tasks. Our code and links to checkpoints for our model variants are available on our website: \url{https://acr.ps/neoarabert}}
+    title = "{N}eo{A}ra{BERT}: A Modern Foundation Model for {A}rabic Embeddings with Diacritics-Aware Tokenization and {POS}-Targeted Masking",
+    author = "Abou Chakra, Chadi  and
+      Hamoud, Hadi Khaled  and
+      Rakan Al Mraikhat, Osama  and
+      Abu Obaida, Qusai  and
+      Ballout, Mohamad  and
+      Zaraket, Fadi",
+    editor = "Liakata, Maria  and
+      Moreira, Viviane P.  and
+      Zhang, Jiajun  and
+      Jurgens, David",
+    booktitle = "Findings of the {A}ssociation for {C}omputational {L}inguistics: {ACL} 2026",
+    month = jul,
+    year = "2026",
+    address = "San Diego, California, United States",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.findings-acl.1293/",
+    doi = "10.18653/v1/2026.findings-acl.1293",
+    pages = "25952--25968",
+    ISBN = "979-8-89176-395-1",
+    abstract = "We present NeoAraBERT, a state-of-the-art open-source Arabic text-embedding model built on the NeoBERT architecture. We pre-train NeoAraBERT on diverse open-source and internal datasets covering modern standard, classical, and dialectal Arabic. We guided our design choices with Arabic tailored ablation studies including text normalization, light stemming, and diacritics-aware tokenization handling. We also performed more general POS-aware token masking and learning-rate scheduling ablation studies. We benchmarked NeoAraBERT against five top-performing Arabic models on 23 tasks, including a novel synonym-based task, ``Muradif'', that directly assesses embedding quality with no additional fine-tuning. NeoAraBERT variants (MSA, dialectal, and mixed) rank first in 18 tasks, second in two, third in two, and fourth in one task. They show strong performance on classical and modern standard Arabic, substantial margins of improvement ($>$7{\%}) in two tasks, and a $+$2.75{\%} improvement on average across all tasks. Our code and links to checkpoints for our model variants are available on our website: \url{https://acr.ps/neoarabert}."
 }
 ```
 

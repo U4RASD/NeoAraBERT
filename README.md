@@ -10,7 +10,7 @@ NeoAraBERT is a state-of-the-art open-source Arabic text-embedding model built o
 
 We pretrain NeoAraBERT on diverse open-source and internal datasets covering modern standard, classical, and dialectal Arabic. We guided our design choices with Arabic tailored ablation studies including text normalization, light stemming, and diacritics-aware tokenization handling. We also performed POS-aware token masking and learning-rate scheduling ablation studies. We benchmarked NeoAraBERT against five top-performing Arabic models on 23 tasks, including a synonym-based task, [Muradif](https://acr.ps/muradif), that directly assesses embedding quality with no additional fine-tuning. NeoAraBERT variants rank first in 18 tasks and improve average performance across the full benchmark suite.
 
-NeoAraBERT was introduced at the 64th Annual Meeting of the Association for Computational Linguistics (ACL 2026). For more information, visit our website: https://acr.ps/neoarabert.
+NeoAraBERT was introduced at [the 64th Annual Meeting of the Association for Computational Linguistics (ACL 2026)](https://aclanthology.org/2026.findings-acl.1293/). For more information, visit our website: https://acr.ps/neoarabert.
 
 The available NeoAraBERT checkpoints:
 

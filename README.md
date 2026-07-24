@@ -109,4 +109,8 @@ We would like to acknowledge Ahmad Talal Salman from Assafir and Professor Amer 
 
 ## License
 
-This model is licensed under the CC BY-SA 4.0 license. The text of the license can be found [here](https://creativecommons.org/licenses/by-sa/4.0/).
+The NeoAraBERT model checkpoints are licensed under the [CC BY-SA 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/).
+
+The source code of this repository is licensed under the MIT License.
+
+This repository contains modified components originally derived from [NeoBERT](https://github.com/chandar-lab/NeoBERT), which is licensed under the MIT License. The original MIT license and attribution are preserved.
